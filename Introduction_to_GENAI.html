@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Generative AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .slide-nav {
+            list-style: none;
+        }
+
+        .slide-nav li {
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .slide-nav li:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #ffd700;
+        }
+
+        .slide-nav li.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-left-color: #ffd700;
+        }
+
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            background: white;
+            transform: translateX(100%);
+            transition: transform 0.5s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            transform: translateX(0);
+        }
+
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+
+        .slide h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin: 25px 0 15px 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            color: #2980b9;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+        }
+
+        .slide p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .interactive-demo {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .demo-output {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            min-height: 50px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .pillar-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 15px 0;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            transition: all 0.3s ease;
+        }
+
+        .pillar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+
+        .application-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .app-card {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c3e50;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .app-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+        }
+
+        .app-card h3 {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .app-card ul {
+            color: #34495e;
+            font-weight: 500;
+        }
+
+        .app-card ul li {
+            margin-bottom: 8px;
+        }
+
+        /* Remove old color classes - now all use the same gradient */
+        .pillar-llm, .pillar-prompt, .pillar-rag, .pillar-finetune, .pillar-agentic,
+        .app-business, .app-creative, .app-software, .app-healthcare, .app-education, .app-research {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            color: #2c3e50;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b);
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .animated-text {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.6s ease forwards;
+        }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .venn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+            height: 400px;
+        }
+
+        .venn-circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .ai-circle {
+            width: 350px;
+            height: 350px;
+            background: rgba(52, 152, 219, 0.3);
+            border-color: #3498db;
+            font-size: 1.5em;
+        }
+
+        .ml-circle {
+            width: 220px;
+            height: 220px;
+            background: rgba(231, 76, 60, 0.4);
+            border-color: #e74c3c;
+            top: 80px;
+            left: -80px;
+            font-size: 1.1em;
+        }
+
+        .dl-circle {
+            width: 160px;
+            height: 160px;
+            background: rgba(39, 174, 96, 0.5);
+            border-color: #27ae60;
+            top: 140px;
+            left: -20px;
+            font-size: 0.95em;
+        }
+
+        .nlp-circle {
+            width: 180px;
+            height: 180px;
+            background: rgba(142, 68, 173, 0.4);
+            border-color: #8e44ad;
+            top: 100px;
+            right: -60px;
+            font-size: 0.95em;
+        }
+
+        .ai-label {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8em;
+            z-index: 10;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+        }
+
+        .ml-card { border-left-color: #e74c3c; }
+        .dl-card { border-left-color: #27ae60; }
+        .nlp-card { border-left-color: #8e44ad; }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .slide {
+                padding: 20px;
+            }
+            
+            .slide h1 {
+                font-size: 2em;
+            }
+
+            .venn-container {
+                height: 300px;
+            }
+
+            .ai-circle {
+                width: 280px;
+                height: 280px;
+                font-size: 1.2em;
+            }
+
+            .ml-circle {
+                width: 180px;
+                height: 180px;
+                font-size: 0.9em;
+                left: -60px;
+                top: 70px;
+            }
+
+            .dl-circle {
+                width: 120px;
+                height: 120px;
+                font-size: 0.8em;
+                left: -10px;
+                top: 120px;
+            }
+
+            .nlp-circle {
+                width: 140px;
+                height: 140px;
+                font-size: 0.8em;
+                right: -40px;
+                top: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <div class="presentation-container">
+        <div class="sidebar">
+            <h3 style="margin-bottom: 20px; color: #ffd700;">Contents</h3>
+            <ul class="slide-nav" id="slideNav">
+                <li data-slide="0" class="active">Introduction</li>
+                <li data-slide="1">What is AI?</li>
+                <li data-slide="2">AI Landscape Overview</li>
+                <li data-slide="3">What is Generative AI?</li>
+                <li data-slide="4">Evolution to GenAI</li>
+                <li data-slide="5">AI vs GenAI</li>
+                <li data-slide="6">GenAI Pillars Overview</li>
+                <li data-slide="7">Large Language Models</li>
+                <li data-slide="8">Prompt Engineering</li>
+                <li data-slide="9">RAG (Retrieval-Augmented Generation)</li>
+                <li data-slide="10">Fine-Tuning</li>
+                <li data-slide="11">Agentic Frameworks</li>
+                <li data-slide="12">Applications of GenAI</li>
+                <li data-slide="13">Conclusion</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <!-- Slide 0: Introduction -->
+            <div class="slide active">
+                <h1 class="animated-text">Introduction to Generative AI</h1>
+                <div style="text-align: center; margin: 50px 0;">
+                    <div style="font-size: 4em; margin-bottom: 20px;">🤖</div>
+                    <p style="font-size: 1.5em; color: #2c3e50; font-weight: 300;">
+                        Exploring the Future of Artificial Intelligence
+                    </p>
+                </div>
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 15px; margin: 30px 0;">
+                    <h3>What You'll Learn:</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">✨ Fundamentals of AI and Generative AI</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">🏗️ The Five Pillars of GenAI</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">🚀 Real-world Applications</li>
+                        <li style="padding: 10px 0;">🔮 Future Possibilities</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 1: What is AI? -->
+            <div class="slide">
+                <h1>What is Artificial Intelligence?</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">Artificial Intelligence (AI)</span> is the simulation of human intelligence in machines that are programmed to think, learn, and make decisions like humans.</p>
+                    
+                    <h2>Key Characteristics of AI:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+                        <div class="pillar-card">
+                            <h3>🧠 Learning</h3>
+                            <p>Ability to acquire and apply knowledge</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🤔 Reasoning</h3>
+                            <p>Making logical connections and inferences</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎯 Problem Solving</h3>
+                            <p>Finding solutions to complex challenges</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>📱 Adaptation</h3>
+                            <p>Adjusting to new situations and data</p>
+                        </div>
+                    </div>
+
+                    <h2>Real-World Examples:</h2>
+                    <ul style="font-size: 1.1em; line-height: 2;">
+                        <li><strong>Virtual Assistants:</strong> Siri, Alexa, Google Assistant</li>
+                        <li><strong>Recommendation Systems:</strong> Netflix, Spotify, Amazon</li>
+                        <li><strong>Autonomous Vehicles:</strong> Tesla, Waymo</li>
+                        <li><strong>Medical Diagnosis:</strong> IBM Watson for Oncology</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 2: AI Landscape Overview -->
+            <div class="slide">
+                <h1>AI Landscape Overview</h1>
+                <div class="animated-text">
+                    <p>Artificial Intelligence encompasses several specialized subfields that work together to create intelligent systems:</p>
+                    
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; padding: 20px; border-radius: 15px; font-size: 1.3em; font-weight: bold;">
+                            🤖 Artificial Intelligence (AI)
+                        </div>
+                        <div style="margin: 20px 0; font-size: 1.2em; color: #2c3e50;">
+                            Key Subfields:
+                        </div>
+                    </div>
+
+                    <div class="concept-grid">
+                        <div class="concept-card ml-card">
+                            <h3>🤖 Machine Learning (ML)</h3>
+                            <ul style="line-height: 1.8; margin-top: 15px;">
+                                <li><strong>Learns from data:</strong> Algorithms improve performance through experience without explicit programming</li>
+                                <li><strong>Pattern recognition:</strong> Identifies trends and makes predictions based on historical data</li>
+                            </ul>
+                            <p style="margin-top: 15px; font-style: italic; color: #7f8c8d;">
+                                <strong>Examples:</strong> Netflix recommendations, fraud detection, email spam filters
+                            </p>
+                        </div>
+
+                        <div class="concept-card dl-card">
+                            <h3>🧠 Deep Learning (DL)</h3>
+                            <ul style="line-height: 1.8; margin-top: 15px;">
+                                <li><strong>Neural networks:</strong> Uses multi-layered artificial neural networks inspired by the human brain</li>
+                                <li><strong>Complex patterns:</strong> Excels at processing unstructured data like images, audio, and text</li>
+                            </ul>
+                            <p style="margin-top: 15px; font-style: italic; color: #7f8c8d;">
+                                <strong>Examples:</strong> Image recognition, autonomous vehicles, voice assistants like Siri
+                            </p>
+                        </div>
+
+                        <div class="concept-card nlp-card">
+                            <h3>💬 Natural Language Processing (NLP)</h3>
+                            <ul style="line-height: 1.8; margin-top: 15px;">
+                                <li><strong>Language understanding:</strong> Enables computers to comprehend, interpret, and generate human language</li>
+                                <li><strong>Communication bridge:</strong> Allows natural interaction between humans and machines through text or speech</li>
+                            </ul>
+                            <p style="margin-top: 15px; font-style: italic; color: #7f8c8d;">
+                                <strong>Examples:</strong> Google Translate, chatbots, sentiment analysis, text summarization
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>🔗 How They Connect to Generative AI</h3>
+                        <p><strong>Generative AI</strong> leverages these AI subfields to create new content:</p>
+                        <ul style="line-height: 2; font-size: 1.1em;">
+                            <li><strong>Uses ML:</strong> To learn patterns from massive datasets</li>
+                            <li><strong>Powered by DL:</strong> Leverages advanced neural network architectures (like Transformers)</li>
+                            <li><strong>Includes NLP:</strong> Many GenAI models focus on language understanding and generation</li>
+                            <li><strong>Goes beyond:</strong> Creates new content rather than just analyzing existing data</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: What is Generative AI? -->
+            <div class="slide">
+                <h1>What is Generative AI?</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">Generative AI</span> is a subset of artificial intelligence that can create new content, including text, images, audio, video, and code, based on the patterns it learned from training data.</p>
+                    
+                    <div class="interactive-demo">
+                        <h3>🎨 Interactive Demo: Text Generation</h3>
+                        <p>Try completing this sentence:</p>
+                        <input type="text" class="demo-input" id="textInput" placeholder="Enter a sentence starter (e.g., 'The future of AI is...')" />
+                        <button class="btn" onclick="generateText()">Generate Completion</button>
+                        <div class="demo-output" id="textOutput">Your generated text will appear here...</div>
+                    </div>
+
+                    <h2>What Makes GenAI Special?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="pillar-card">
+                            <h3>🎨 Creative</h3>
+                            <p>Generates original content like art, stories, and music</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🔄 Adaptive</h3>
+                            <p>Learns patterns and styles from diverse data</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎯 Context-Aware</h3>
+                            <p>Understands context to generate relevant content</p>
+                        </div>
+                    </div>
+
+                    <h2>Popular GenAI Examples:</h2>
+                    <ul style="font-size: 1.1em; line-height: 2;">
+                        <li><strong>Text:</strong> ChatGPT, Claude, Gemini</li>
+                        <li><strong>Images:</strong> DALL-E, Midjourney, Stable Diffusion</li>
+                        <li><strong>Code:</strong> GitHub Copilot, CodeT5</li>
+                        <li><strong>Music:</strong> AIVA, Amper Music</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 4: Evolution to GenAI -->
+            <div class="slide">
+                <h1>How GenAI Came Into Picture</h1>
+                <div class="animated-text">
+                    <h2>🕰️ The Evolution Timeline</h2>
+                    <div style="position: relative; margin: 30px 0;">
+                        <div style="border-left: 4px solid #3498db; padding-left: 30px;">
+                            <div style="margin-bottom: 30px; position: relative;">
+                                <div style="background: #3498db; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold;">1950s-1980s</div>
+                                <h3>Early AI Foundation</h3>
+                                <p>Rule-based systems, expert systems, symbolic AI</p>
+                            </div>
+                            <div style="margin-bottom: 30px; position: relative;">
+                                <div style="background: #e74c3c; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold;">1990s-2000s</div>
+                                <h3>Machine Learning Era</h3>
+                                <p>Statistical methods, pattern recognition, data-driven approaches</p>
+                            </div>
+                            <div style="margin-bottom: 30px; position: relative;">
+                                <div style="background: #f39c12; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold;">2010s</div>
+                                <h3>Deep Learning Revolution</h3>
+                                <p>Neural networks, GPUs, big data, breakthrough in image/speech recognition</p>
+                            </div>
+                            <div style="margin-bottom: 30px; position: relative;">
+                                <div style="background: #27ae60; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold;">2017-2020</div>
+                                <h3>Transformer Architecture</h3>
+                                <p>Attention mechanism, GPT-1, BERT, foundation models</p>
+                            </div>
+                            <div style="position: relative;">
+                                <div style="background: #9b59b6; color: white; padding: 5px 15px; border-radius: 20px; display: inline-block; font-weight: bold;">2020-Present</div>
+                                <h3>Generative AI Boom</h3>
+                                <p>ChatGPT, DALL-E, widespread adoption, multimodal AI</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>Key Breakthrough Moments:</h2>
+                    <div class="pillar-card">
+                        <h3>🔄 The Transformer Paper (2017)</h3>
+                        <p>"Attention Is All You Need" - introduced the transformer architecture that powers modern GenAI</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3>🚀 Scale Revolution</h3>
+                        <p>Larger models + more data + better compute = emergent capabilities</p>
+                    </div>
+                    <div class="pillar-card">
+                        <h3>💡 Democratization</h3>
+                        <p>User-friendly interfaces made AI accessible to everyone</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: AI vs GenAI -->
+            <div class="slide">
+                <h1>Traditional AI vs Generative AI</h1>
+                <div class="animated-text">
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Traditional AI</th>
+                                <th>Generative AI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Primary Function</strong></td>
+                                <td>Analyze, classify, predict</td>
+                                <td>Create, generate, synthesize</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Output Type</strong></td>
+                                <td>Decisions, classifications, numbers</td>
+                                <td>New content (text, images, code)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Learning Method</strong></td>
+                                <td>Supervised/Unsupervised learning</td>
+                                <td>Self-supervised learning</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Requirements</strong></td>
+                                <td>Labeled datasets</td>
+                                <td>Large volumes of diverse data</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Creativity Level</strong></td>
+                                <td>Limited to trained patterns</td>
+                                <td>High creative capability</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Real-World Comparison Examples:</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
+                        <div class="pillar-card" style="border-left-color: #e74c3c;">
+                            <h3>🔍 Traditional AI Example</h3>
+                            <p><strong>Email Spam Filter</strong></p>
+                            <ul>
+                                <li>Analyzes email content</li>
+                                <li>Classifies as spam/not spam</li>
+                                <li>Returns binary decision</li>
+                                <li>No content creation</li>
+                            </ul>
+                        </div>
+                        <div class="pillar-card" style="border-left-color: #27ae60;">
+                            <h3>🎨 Generative AI Example</h3>
+                            <p><strong>Email Writing Assistant</strong></p>
+                            <ul>
+                                <li>Understands context and intent</li>
+                                <li>Generates complete emails</li>
+                                <li>Creates original content</li>
+                                <li>Adapts tone and style</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: GenAI Pillars Overview -->
+            <div class="slide">
+                <h1>The Five Pillars of Generative AI</h1>
+                <div class="animated-text">
+                    <p>Modern GenAI systems are built on five fundamental pillars that work together to create powerful AI applications:</p>
+                    
+                    <div class="application-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                        <div class="app-card pillar-llm">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">🧠</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Large Language Models (LLMs)</h3>
+                            <p style="color: #34495e; font-weight: 500;">The foundation models that understand and generate human language</p>
+                        </div>
+                        <div class="app-card pillar-prompt">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">✏️</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Prompt Engineering</h3>
+                            <p style="color: #34495e; font-weight: 500;">The art of crafting effective instructions for AI models</p>
+                        </div>
+                        <div class="app-card pillar-rag">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">🔗</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">RAG</h3>
+                            <p style="color: #34495e; font-weight: 500;">Retrieval-Augmented Generation for enhanced knowledge</p>
+                        </div>
+                        <div class="app-card pillar-finetune">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">⚙️</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Fine-Tuning</h3>
+                            <p style="color: #34495e; font-weight: 500;">Customizing models for specific tasks and domains</p>
+                        </div>
+                        <div class="app-card pillar-agentic">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">🤖</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Agentic Frameworks</h3>
+                            <p style="color: #34495e; font-weight: 500;">Autonomous AI systems that can plan and execute tasks</p>
+                        </div>
+                    </div>
+
+                    <div class="pillar-card">
+                        <h3>🔄 How They Work Together</h3>
+                        <p>These pillars don't work in isolation. A complete GenAI application might use an LLM as its base, enhanced with RAG for current information, fine-tuned for specific domains, guided by carefully engineered prompts, and orchestrated by an agentic framework for complex workflows.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Large Language Models -->
+            <div class="slide">
+                <h1>Large Language Models (LLMs)</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">Large Language Models</span> are neural networks trained on vast amounts of text data to understand and generate human-like language.</p>
+
+                    <h2>How LLMs Are Derived:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0;">
+                        <div class="pillar-card">
+                            <h3>1️⃣ Data Collection</h3>
+                            <p>Massive text datasets from books, websites, articles</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>2️⃣ Architecture</h3>
+                            <p>Transformer neural networks with attention mechanisms</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>3️⃣ Training</h3>
+                            <p>Learning patterns through next-token prediction</p>
+                        </div>
+                    </div>
+
+                    <h2>Open Source vs Closed Source LLMs:</h2>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Aspect</th>
+                                <th>Open Source</th>
+                                <th>Closed Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Examples</strong></td>
+                                <td>Llama 2/3, Mistral, Gemma</td>
+                                <td>GPT-4, Claude, Gemini Pro</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Customization</strong></td>
+                                <td>Full access to modify</td>
+                                <td>Limited customization</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cost</strong></td>
+                                <td>Free to use (compute costs)</td>
+                                <td>Usage-based pricing</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Privacy</strong></td>
+                                <td>Run locally, full control</td>
+                                <td>Data sent to providers</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Performance</strong></td>
+                                <td>Varies, improving rapidly</td>
+                                <td>Often state-of-the-art</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="interactive-demo">
+                        <h3>🔬 Model Size Comparison</h3>
+                        <p>Typical parameter counts:</p>
+                        <ul>
+                            <li><strong>Small Models:</strong> 7B-13B parameters (good for specific tasks)</li>
+                            <li><strong>Medium Models:</strong> 30B-70B parameters (versatile performance)</li>
+                            <li><strong>Large Models:</strong> 175B+ parameters (state-of-the-art capabilities)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Prompt Engineering -->
+            <div class="slide">
+                <h1>Prompt Engineering</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">Prompt Engineering</span> is the practice of designing and optimizing text prompts to effectively communicate with AI models and get desired outputs.</p>
+
+                    <h2>Why Prompt Engineering Matters:</h2>
+                    <div class="pillar-card">
+                        <p>The same model can produce vastly different results based on how you ask the question. Good prompts can improve accuracy by 50-80%!</p>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>🎯 Interactive Prompt Demo</h3>
+                        <p>Compare these two approaches for the same task:</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <h4 style="color: #e74c3c;">❌ Poor Prompt:</h4>
+                                <div class="demo-output" style="background: #e74c3c;">
+                                    "Write about dogs"
+                                </div>
+                                <p><em>Vague, could produce any dog-related content</em></p>
+                            </div>
+                            <div>
+                                <h4 style="color: #27ae60;">✅ Good Prompt:</h4>
+                                <div class="demo-output" style="background: #27ae60;">
+                                    "Write a 200-word beginner's guide explaining why dogs make good family pets. Include 3 specific benefits and use a friendly, informative tone."
+                                </div>
+                                <p><em>Specific, structured, with clear expectations</em></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h2>Key Prompt Engineering Techniques:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="pillar-card">
+                            <h3>🎯 Be Specific</h3>
+                            <p>Clear instructions yield better results than vague requests</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>📝 Provide Examples</h3>
+                            <p>Show the AI what you want with sample inputs/outputs</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🏗️ Structure Your Request</h3>
+                            <p>Break complex tasks into clear steps</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎭 Set the Role</h3>
+                            <p>"Act as a teacher, lawyer, or expert in..."</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🔄 Iterate and Refine</h3>
+                            <p>Test and improve your prompts based on results</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>⚖️ Control Output Format</h3>
+                            <p>Specify length, style, format (JSON, list, etc.)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 8: RAG -->
+            <div class="slide">
+                <h1>RAG (Retrieval-Augmented Generation)</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">RAG</span> combines the power of information retrieval with generative AI to provide accurate, up-to-date, and contextually relevant responses using external knowledge sources.</p>
+
+                    <h2>The RAG Process:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 30px 0;">
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🔍</div>
+                            <h3>1. Retrieve</h3>
+                            <p>Search relevant documents from knowledge base</p>
+                        </div>
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">📝</div>
+                            <h3>2. Augment</h3>
+                            <p>Combine retrieved info with user query</p>
+                        </div>
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🎯</div>
+                            <h3>3. Generate</h3>
+                            <p>LLM creates response using retrieved context</p>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>🏢 Real-World RAG Example: Customer Support</h3>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                            <p><strong>User Question:</strong> "How do I reset my password?"</p>
+                            <p><strong>RAG Process:</strong></p>
+                            <ol>
+                                <li><strong>Retrieve:</strong> Finds relevant docs from support knowledge base</li>
+                                <li><strong>Augment:</strong> Combines question with step-by-step reset procedures</li>
+                                <li><strong>Generate:</strong> Creates personalized, accurate response with current procedures</li>
+                            </ol>
+                            <p><strong>Result:</strong> Accurate, up-to-date help instead of generic or outdated information</p>
+                        </div>
+                    </div>
+
+                    <h2>Benefits of RAG:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div class="pillar-card">
+                            <h3>📚 Current Information</h3>
+                            <p>Access to latest data without retraining</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎯 Accuracy</h3>
+                            <p>Reduces hallucinations with factual sources</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🔍 Transparency</h3>
+                            <p>Can cite sources and show reasoning</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>💰 Cost-Effective</h3>
+                            <p>No need to retrain large models</p>
+                        </div>
+                    </div>
+
+                    <h2>Common RAG Applications:</h2>
+                    <ul style="font-size: 1.1em; line-height: 2;">
+                        <li><strong>Enterprise Search:</strong> Intelligent document retrieval</li>
+                        <li><strong>Customer Support:</strong> Automated help with company policies</li>
+                        <li><strong>Research Assistance:</strong> Academic and technical queries</li>
+                        <li><strong>Legal Analysis:</strong> Case law and regulation lookup</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 9: Fine-Tuning -->
+            <div class="slide">
+                <h1>Fine-Tuning</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">Fine-tuning</span> is the process of adapting a pre-trained model to perform better on specific tasks or domains by training it on specialized datasets.</p>
+
+                    <h2>Types of Fine-Tuning:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0;">
+                        <div class="pillar-card">
+                            <h3>🎯 Task-Specific Fine-Tuning</h3>
+                            <p>Optimize for specific tasks like classification, summarization, or translation</p>
+                            <p><strong>Example:</strong> Fine-tuning GPT for legal document analysis</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🏢 Domain-Specific Fine-Tuning</h3>
+                            <p>Adapt to specific industries or knowledge areas</p>
+                            <p><strong>Example:</strong> Medical AI trained on healthcare data</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎨 Style Fine-Tuning</h3>
+                            <p>Match specific writing styles or brand voices</p>
+                            <p><strong>Example:</strong> Customer service chatbot with company tone</p>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>🔬 Fine-Tuning Process Example</h3>
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px;">
+                            <h4>Case Study: E-commerce Product Descriptions</h4>
+                            <ol style="line-height: 2;">
+                                <li><strong>Start:</strong> General LLM (good at many tasks)</li>
+                                <li><strong>Collect Data:</strong> 10,000 product descriptions in your style</li>
+                                <li><strong>Fine-Tune:</strong> Train model on your specific format and tone</li>
+                                <li><strong>Result:</strong> Model that writes product descriptions matching your brand perfectly</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <h2>When to Use Fine-Tuning:</h2>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Scenario</th>
+                                <th>Use Fine-Tuning?</th>
+                                <th>Alternative</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Specific domain knowledge</td>
+                                <td>✅ Yes</td>
+                                <td>RAG for dynamic info</td>
+                            </tr>
+                            <tr>
+                                <td>Consistent output format</td>
+                                <td>✅ Yes</td>
+                                <td>Detailed prompt engineering</td>
+                            </tr>
+                            <tr>
+                                <td>Brand voice/style</td>
+                                <td>✅ Yes</td>
+                                <td>Style prompts</td>
+                            </tr>
+                            <tr>
+                                <td>General questions</td>
+                                <td>❌ No</td>
+                                <td>Use base model</td>
+                            </tr>
+                            <tr>
+                                <td>Current events</td>
+                                <td>❌ No</td>
+                                <td>RAG with news sources</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Benefits vs Challenges:</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="pillar-card" style="border-left-color: #27ae60;">
+                            <h3>✅ Benefits</h3>
+                            <ul>
+                                <li>Higher accuracy for specific tasks</li>
+                                <li>Consistent output quality</li>
+                                <li>Reduced prompt complexity</li>
+                                <li>Better domain understanding</li>
+                            </ul>
+                        </div>
+                        <div class="pillar-card" style="border-left-color: #e74c3c;">
+                            <h3>⚠️ Challenges</h3>
+                            <ul>
+                                <li>Requires quality training data</li>
+                                <li>Time and compute intensive</li>
+                                <li>Risk of overfitting</li>
+                                <li>Model maintenance needed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 10: Agentic Frameworks -->
+            <div class="slide">
+                <h1>Agentic Frameworks</h1>
+                <div class="animated-text">
+                    <p><span class="highlight">Agentic Frameworks</span> enable AI systems to act autonomously, making decisions, using tools, and executing complex multi-step workflows to achieve goals.</p>
+
+                    <h2>What Makes an AI "Agentic"?</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0;">
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🎯</div>
+                            <h3>Goal-Oriented</h3>
+                            <p>Works toward specific objectives</p>
+                        </div>
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🤔</div>
+                            <h3>Autonomous</h3>
+                            <p>Makes decisions without constant human input</p>
+                        </div>
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🛠️</div>
+                            <h3>Tool Usage</h3>
+                            <p>Can use external APIs and services</p>
+                        </div>
+                        <div class="pillar-card" style="text-align: center;">
+                            <div style="font-size: 3em; margin-bottom: 15px;">🔄</div>
+                            <h3>Iterative</h3>
+                            <p>Learns from results and adapts approach</p>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>🚀 Real-World Example: AI Travel Agent</h3>
+                        <div style="background: #f8f9fa; padding: 25px; border-radius: 15px;">
+                            <p><strong>User Goal:</strong> "Plan a 5-day trip to Japan for $3000"</p>
+                            <h4>Agent Workflow:</h4>
+                            <ol style="line-height: 1.8;">
+                                <li><strong>Research:</strong> Searches flight prices, hotel rates, attractions</li>
+                                <li><strong>Planning:</strong> Creates itinerary based on budget and preferences</li>
+                                <li><strong>Booking:</strong> Uses APIs to check availability and prices</li>
+                                <li><strong>Optimization:</strong> Adjusts plan if costs exceed budget</li>
+                                <li><strong>Presentation:</strong> Delivers complete travel plan with alternatives</li>
+                            </ol>
+                            <p><strong>Tools Used:</strong> Flight API, Hotel booking, Weather service, Currency converter, Maps API</p>
+                        </div>
+                    </div>
+
+                    <h2>Popular Agentic Frameworks:</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="pillar-card">
+                            <h3>🦜 LangChain</h3>
+                            <p>Comprehensive framework for building LLM applications with agent capabilities</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🏗️ AutoGPT</h3>
+                            <p>Autonomous AI that breaks down goals into sub-tasks</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🔧 LlamaIndex</h3>
+                            <p>Data framework with agentic query capabilities</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎯 CrewAI</h3>
+                            <p>Multi-agent collaboration framework</p>
+                        </div>
+                    </div>
+
+                    <h2>Agent Types:</h2>
+                    <ul style="font-size: 1.1em; line-height: 2;">
+                        <li><strong>ReAct Agents:</strong> Reason and Act in iterative cycles</li>
+                        <li><strong>Tool-Using Agents:</strong> Access external APIs and databases</li>
+                        <li><strong>Multi-Agent Systems:</strong> Multiple AI agents collaborating</li>
+                        <li><strong>Planning Agents:</strong> Create and execute complex workflows</li>
+                    </ul>
+
+                    <div class="pillar-card" style="background: linear-gradient(135deg, #ff6b6b, #feca57); color: white;">
+                        <h3>🔮 Future of Agentic AI</h3>
+                        <p>We're moving toward AI assistants that can handle entire workflows - from research and planning to execution and follow-up, transforming how we work and solve problems.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 11: Applications -->
+            <div class="slide">
+                <h1>Applications of Generative AI</h1>
+                <div class="animated-text">
+                    <p>GenAI is transforming industries and creating new possibilities across every sector:</p>
+
+                    <div class="application-grid">
+                        <div class="app-card app-business">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">💼</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Business & Enterprise</h3>
+                            <ul style="text-align: left; margin-top: 15px; color: #34495e; font-weight: 500;">
+                                <li>Automated report generation</li>
+                                <li>Customer service chatbots</li>
+                                <li>Content marketing</li>
+                                <li>Data analysis and insights</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="app-card app-creative">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">🎨</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Creative Industries</h3>
+                            <ul style="text-align: left; margin-top: 15px; color: #34495e; font-weight: 500;">
+                                <li>Image and video generation</li>
+                                <li>Music composition</li>
+                                <li>Writing and storytelling</li>
+                                <li>Game development</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="app-card app-software">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">💻</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Software Development</h3>
+                            <ul style="text-align: left; margin-top: 15px; color: #34495e; font-weight: 500;">
+                                <li>Code generation and completion</li>
+                                <li>Bug detection and fixing</li>
+                                <li>Documentation writing</li>
+                                <li>Test case generation</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="app-card app-healthcare">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">🏥</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Healthcare</h3>
+                            <ul style="text-align: left; margin-top: 15px; color: #34495e; font-weight: 500;">
+                                <li>Drug discovery</li>
+                                <li>Medical imaging analysis</li>
+                                <li>Patient record summarization</li>
+                                <li>Treatment recommendations</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="app-card app-education">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">📚</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Education</h3>
+                            <ul style="text-align: left; margin-top: 15px; color: #34495e; font-weight: 500;">
+                                <li>Personalized tutoring</li>
+                                <li>Content creation</li>
+                                <li>Language learning</li>
+                                <li>Assessment generation</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="app-card app-research">
+                            <div style="font-size: 3em; margin-bottom: 15px; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));">🔬</div>
+                            <h3 style="color: #2c3e50; font-weight: bold;">Research & Science</h3>
+                            <ul style="text-align: left; margin-top: 15px; color: #34495e; font-weight: 500;">
+                                <li>Literature review</li>
+                                <li>Hypothesis generation</li>
+                                <li>Data analysis</li>
+                                <li>Scientific writing</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h2>🌟 Emerging Applications:</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
+                        <div class="pillar-card">
+                            <h3>🏗️ Architecture & Design</h3>
+                            <p>AI-generated building designs, interior layouts, and urban planning solutions</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>⚖️ Legal Tech</h3>
+                            <p>Contract analysis, legal research, and document generation</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🌱 Agriculture</h3>
+                            <p>Crop optimization, pest identification, and sustainable farming practices</p>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🎭 Entertainment</h3>
+                            <p>Interactive storytelling, personalized content, and virtual characters</p>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>📈 Industry Impact Statistics</h3>
+                        <ul style="font-size: 1.1em; line-height: 2;">
+                            <li><strong>McKinsey Report:</strong> GenAI could add $2.6-4.4 trillion annually to global economy</li>
+                            <li><strong>GitHub:</strong> 92% of developers use AI coding tools</li>
+                            <li><strong>Content Marketing:</strong> 60% faster content creation with AI assistance</li>
+                            <li><strong>Customer Service:</strong> 40% reduction in response time with AI chatbots</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 12: Conclusion -->
+            <div class="slide">
+                <h1>Conclusion: The Future is Generative</h1>
+                <div class="animated-text">
+                    <div style="text-align: center; margin: 30px 0;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">🚀</div>
+                        <p style="font-size: 1.3em; color: #2c3e50; margin-bottom: 30px;">
+                            We're just at the beginning of the GenAI revolution
+                        </p>
+                    </div>
+
+                    <h2>Key Takeaways:</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 30px 0;">
+                        <div class="pillar-card">
+                            <h3>🧠 Understanding GenAI</h3>
+                            <ul>
+                                <li>GenAI creates new content, not just analyzes</li>
+                                <li>Built on transformer architecture</li>
+                                <li>Different from traditional AI approaches</li>
+                            </ul>
+                        </div>
+                        <div class="pillar-card">
+                            <h3>🏗️ The Five Pillars</h3>
+                            <ul>
+                                <li>LLMs as the foundation</li>
+                                <li>Prompt engineering for effective communication</li>
+                                <li>RAG for current knowledge</li>
+                                <li>Fine-tuning for specialization</li>
+                                <li>Agentic frameworks for automation</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="interactive-demo">
+                        <h3>🔮 What's Next?</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 2.5em; margin-bottom: 10px;">🤖</div>
+                                <h4>Multimodal AI</h4>
+                                <p>Text, image, audio, and video in one system</p>
+                            </div>
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 2.5em; margin-bottom: 10px;">🧠</div>
+                                <h4>AGI Progress</h4>
+                                <p>Moving toward more general intelligence</p>
+                            </div>
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 2.5em; margin-bottom: 10px;">⚡</div>
+                                <h4>Edge AI</h4>
+                                <p>Powerful AI running on personal devices</p>
+                            </div>
+                            <div style="text-align: center; padding: 20px;">
+                                <div style="font-size: 2.5em; margin-bottom: 10px;">🌐</div>
+                                <h4>AI Agents</h4>
+                                <p>Autonomous systems handling complex workflows</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pillar-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
+                        <h3>🎯 Your GenAI Journey Starts Now</h3>
+                        <p style="font-size: 1.2em; margin: 20px 0;">
+                            Start experimenting, learn the tools, and discover how GenAI can transform your work and creativity.
+                        </p>
+                        <p style="font-size: 1.1em; font-style: italic;">
+                            "The best way to predict the future is to create it" - with GenAI as your partner.
+                        </p>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 40px;">
+                        <h2>Thank You! 🙏</h2>
+                        <p style="font-size: 1.2em; color: #7f8c8d;">
+                            Questions? Let's explore the future of AI together!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="prevBtn" onclick="previousSlide()">← Previous</button>
+            <button class="btn" id="nextBtn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const navItems = document.querySelectorAll('.slide-nav li');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            // Hide all slides
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index < n) {
+                    slide.classList.add('prev');
+                } else if (index === n) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update navigation
+            navItems.forEach((item, index) => {
+                item.classList.toggle('active', index === n);
+            });
+
+            // Update controls
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalSlides - 1;
+
+            // Update progress bar
+            const progress = ((n + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // Trigger animations
+            const activeSlide = slides[n];
+            const animatedElements = activeSlide.querySelectorAll('.animated-text');
+            animatedElements.forEach((el, index) => {
+                el.style.animationDelay = (index * 0.2) + 's';
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        // Navigation click handlers
+        navItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentSlide = index;
+                showSlide(currentSlide);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+            if (e.key >= '1' && e.key <= '9') {
+                const slideNum = parseInt(e.key) - 1;
+                if (slideNum < totalSlides) {
+                    currentSlide = slideNum;
+                    showSlide(currentSlide);
+                }
+            }
+        });
+
+        // Interactive demo functions
+        function generateText() {
+            const input = document.getElementById('textInput').value;
+            const output = document.getElementById('textOutput');
+            
+            if (!input.trim()) {
+                output.textContent = 'Please enter a sentence starter first!';
+                return;
+            }
+
+            // Simulate text generation with realistic completions
+            const completions = {
+                'The future of AI is': ' incredibly promising, with potential to revolutionize healthcare, education, and scientific research while augmenting human creativity and problem-solving capabilities.',
+                'Artificial intelligence will': ' become an integral part of our daily lives, helping us solve complex problems and making technology more accessible to everyone.',
+                'Machine learning can': ' process vast amounts of data to identify patterns and insights that would be impossible for humans to discover manually.',
+                'default': ' fascinating and full of possibilities. GenAI represents a paradigm shift in how we interact with technology and create content.'
+            };
+
+            const completion = completions[input] || completions['default'];
+            
+            // Typing effect
+            output.textContent = '';
+            let i = 0;
+            const typeWriter = () => {
+                if (i < completion.length) {
+                    output.textContent += completion.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            };
+            typeWriter();
+        }
+
+        // Initialize presentation
+        showSlide(0);
+
+        // Add smooth scrolling for slide content
+        slides.forEach(slide => {
+            slide.addEventListener('wheel', (e) => {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html>
